@@ -27,20 +27,20 @@ async def commonmessage(client, message):
 
     textmsg = message.text
 
-    # if ".sms" in textmsg:
-    #     link = (re.search(r"(?P<url>https?://\S+)", textmsg).group("url"))
-    #     if "?" in link:
-    #         link = link.split('?')[0]
-    #
-    #     msg_id = int(link.split("/")[-1])
-    #     if any(c.isalpha() for c in link.split("/")[-2]):
-    #         chat_id = link.split("/")[-2]
-    #     else:
-    #         chat_id = int('-100' + str(link.split("/")[-2]))
-    #
-    #     event = await app.get_messages(chat_id, msg_id)
-    #
-    #     await sender_single_alt(event)
+    if ".sms" in textmsg:
+        link = (re.search(r"(?P<url>https?://\S+)", textmsg).group("url"))
+        if "?" in link:
+            link = link.split('?')[0]
+
+        msg_id = int(link.split("/")[-1])
+        if any(c.isalpha() for c in link.split("/")[-2]):
+            chat_id = link.split("/")[-2]
+        else:
+            chat_id = int('-100' + str(link.split("/")[-2]))
+
+        event = await app.get_messages(chat_id, msg_id)
+
+        await sender_single_alt(event)
 
 
 async def sender_single_alt(mesgsingle):
