@@ -1,0 +1,4 @@
+*.session
+/downloads/
+/.idea/
+/.vs/
