@@ -175,8 +175,6 @@ async def progress_bar_upload_single(current, total, start, tambahan=""):
         elapsed_time = round(diff) * 1000
         time_to_completion = round((total - current) / speed) * 1000
         estimated_total_time = elapsed_time + time_to_completion
-
-        # elapsed_time = TimeFormatter(milliseconds=elapsed_time)
         estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
 
         progress = "{0} , {1}% , ".format(
@@ -219,15 +217,12 @@ def save_frame_from_video(video_path, durationsecond, frame_file_path):
             return f'{frame_file_path}'
         time_stamp = int(durationsecond) / 2
         time_stampmili = int(time_stamp * 1000)
-        # print(time_stampmili)
-        # out = datetime.now().isoformat("_", "seconds") + ".jpg"
-        vidcap = cv2.VideoCapture(video_path)
 
+        vidcap = cv2.VideoCapture(video_path)
         vidcap.set(cv2.CAP_PROP_POS_MSEC, time_stampmili)
 
         success, image = vidcap.read()
 
-        # save image to temp file
         cv2.imwrite(frame_file_path, image)
 
         vidcap.release()
