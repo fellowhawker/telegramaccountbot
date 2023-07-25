@@ -7,7 +7,7 @@ import time
 
 import cv2
 import humanize
-from pyrogram import Client, enums
+from pyrogram import Client
 from pyrogram.handlers import MessageHandler
 from ffmpeg import Progress
 from ffmpeg.asyncio import FFmpeg
@@ -45,8 +45,6 @@ async def commonmessage(client, message):
 
 async def sender_single_alt(mesgsingle):
     print("sender_single_alt")
-
-
     messagestatus = "sender_single_alt"
     singlefile = None
     try:
@@ -72,8 +70,6 @@ async def sender_single_alt(mesgsingle):
 
         data = video_metadata(singlefile)
         duration = data["duration"]
-        width = data["width"]
-        height = data["height"]
 
         filename = os.path.basename(singlefile)
         workdir = os.path.dirname(singlefile)
@@ -88,47 +84,45 @@ async def sender_single_alt(mesgsingle):
             thumb_path = None
 
         try:
-            if mesgsingle.caption is not None:
-
-                fileid = await app.send_video(
-                    "me",
-                    singlefile,
-                    caption=mesgsingle.caption,
-                    thumb=thumb_path,
-                    duration=duration,
-                    width=width,
-                    height=height,
-                    progress=progress_bar_upload_single,
-                    progress_args=(
-                        time.time(),
-                        f"sending movie file {filename} ",
-                    ),
-                )
-            else:
-                fileid = await app.send_video(
-                    "me",
-                    singlefile,
-                    thumb=thumb_path,
-                    duration=duration,
-                    width=width,
-                    height=height,
-                    progress=progress_bar_upload_single,
-                    progress_args=(
-                        time.time(),
-                        f"sending movie file {filename} ",
-                    ),
-                )
+            fileid = await wrapper_send_video(data, mesgsingle, singlefile, thumb_path)
         except Exception as fnien:
             print(f"Error when UploadMediaSingle = {fnien}")
 
         await asyncio.sleep(3)
+
+
+async def wrapper_send_video(data, mesgsingle, singlefile, thumb_path):
+    duration = data["duration"]
+    width = data["width"]
+    height = data["height"]
+
+    filename = os.path.basename(singlefile)
+
+    caption = None
+    if mesgsingle.caption is not None:
+        caption = mesgsingle.caption
+
+    return await app.send_video(
+        "me",
+        singlefile,
+        caption=caption,
+        thumb=thumb_path,
+        duration=duration,
+        width=width,
+        height=height,
+        progress=progress_bar_upload_single,
+        progress_args=(
+            time.time(),
+            f"sending movie file {filename} ",
+        ),
+    )
+
 
 async def progress_download_for_pyrogram(current, total, start, choice_single_album="single"):
 
     FINISHED_PROGRESS_STR = "█"
     UN_FINISHED_PROGRESS_STR = ""
     DOWNLOAD_LOCATION = "./app/"
-    # print(tmp)
 
     now = time.time()
     diff = now - start
@@ -166,7 +160,6 @@ async def progress_download_for_pyrogram(current, total, start, choice_single_al
 async def progress_bar_upload_single(current, total, start, tambahan=""):
 
     DOWNLOAD_LOCATION = "./app/"
-
     now = time.time()
     diff = now - start
 
